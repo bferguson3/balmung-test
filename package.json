@@ -1,21 +1,18 @@
 {
-  "name": "@excaliburjs/excalibur-tiled",
-  "version": "2.1.0",
-  "description": "excalibur-tiled provides Tiled map editor integration with Excalibur.js",
+  "name": "balmung",
+  "version": "0.0.1",
+  "description": "Excalibur (-tiled) game.",
   "main": "dist/excalibur-tiled.js",
   "typings": "dist/lib/index.d.ts",
   "author": {
-    "name": "Excalibur.js Team",
-    "email": "excaliburjs@gmail.com",
+    "name": "Ben Ferguson",
+    "email": "ferguson.ben86@gmail.com",
     "url": "http://excaliburjs.com"
   },
-  "homepage": "https://github.com/excaliburjs/excalibur-tiled",
+  "homepage": "https://github.com/bferguson3/balmung-test/",
   "repository": {
     "type": "git",
-    "url": "git://github.com/excaliburjs/excalibur-tiled.git"
-  },
-  "bugs": {
-    "url": "https://github.com/excaliburjs/excalibur-tiled/issues"
+    "url": "git://github.com/bferguson3/balmung-test.git"
   },
   "license": "BSD-2-Clause",
   "keywords": [
