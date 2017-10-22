@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Tiled Extension for Excalibur.js
 
 This extension adds support for a new `TiledResource` to Excalibur.js to read [Tiled map editor](http://mapeditor.org) files (currently only JSON).
@@ -93,3 +94,7 @@ To compile only:
 To compile test:
 
     npm test
+=======
+# balmung-test
+Excalibur (+tiled) RPG test game thing.
+>>>>>>> 0f282eb4424dffe9f303f5c017a28a2fed27a5b3

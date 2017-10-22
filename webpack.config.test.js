@@ -1,5 +1,5 @@
 module.exports = {
- entry: './test/test.ts',
+ entry: './game/game.ts',
  module: {
    rules: [
      {
@@ -13,7 +13,7 @@ module.exports = {
    extensions: [".tsx", ".ts", ".js"]
  },
  output: {
-   filename: 'test/test.js',
+   filename: 'game/game.js',
    path: __dirname,
    libraryTarget: "umd"
  },
