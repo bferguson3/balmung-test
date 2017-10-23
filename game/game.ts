@@ -79,7 +79,7 @@ game.start(loader).then(function() {
    activeCamera = game.currentScene.camera;
 
    console.log("Map and all actors loaded.");
-   
+   UpdateCam();
    inputMode = "movement";
 });
 
@@ -128,8 +128,9 @@ function TriggerSetup(){
 function UpdateCam(){
       var target = hero;
       //console.log("update");
-       activeCamera.move(new ex.Vector(target.x, target.y));
-   
+      //activeCamera.actions.clearActions();
+      activeCamera.x = target.x;
+      activeCamera.y = target.y;
 }
 
 class Hero extends ex.Actor{
@@ -141,21 +142,24 @@ class Hero extends ex.Actor{
          //UpdateCam();
          if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){//} isKeyDown(ex.Input.Keys.Right)) {
              if(this.CheckCollision("right")){
-              this.x += 32;
-              UpdateCam();
+              
+               
+               this.x += 32;
+               UpdateCam();
            }
         }
         else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Left)){
          if(this.CheckCollision("left")) 
-             this.x -= 32;
-
-             UpdateCam();
-        }
+         
+         
+         this.x -= 32;
+         UpdateCam();
+             }
        else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Up)){
           if(this.CheckCollision("up"))
              this.y -= 32;
-
              UpdateCam();
+             
        }
          else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Down)){
           if(this.CheckCollision("down")) 
@@ -206,8 +210,14 @@ class Hero extends ex.Actor{
                      inputMode = "dialogue";
                      targetCell.TurnDialoguePage();
                      //targetCell.pageOffset += 4;
-
-                     diaMap.x = 80; //game.getDrawWidth() + 80;
+                     diaMap.y = hero.y + 80;
+                     diaMap.x = hero.x - game.getDrawWidth()/2 + 80;
+                     var offsettxt = 50;
+                     dialogueLabels.forEach(element => {
+                        element.x = diaMap.x + 30;
+                        element.y = diaMap.y + offsettxt;
+                        offsettxt += 30;
+                     });
                      targetCell.fired = true;
                      
                      break;
