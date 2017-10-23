@@ -1,15 +1,16 @@
 import * as ex from 'excalibur';
+import { g } from "./globals";
 import TiledResource from '../src';
+import { Hero } from './actors';
 
-var game = new ex.Engine({ 
+export var game = new ex.Engine({ 
    width: 800, 
    height: 600, 
    canvasElementId: 'game'
 });
 
-enum inputModes { moving, dialogue, loading }
-enum sceneType { dialogue }
-enum directions { up, left, down, right }
+//enum inputModes { moving, dialogue, loading }
+
 //var scene1 = new ex.Scene;
 //ar rootScene = ex.Scene;
 //var cam = ex.BaseCamera;
@@ -32,13 +33,13 @@ for(var asset in resources){
 }
 
 //globals//
-var tm;
-var diaMap;
-var inputMode = inputModes.loading;
-var dialogueLabels;
-var activeTrigger;
+export var tm;
+export var diaMap;
+g.inputMode = g.inputModes.loading;
+export var dialogueLabels;
+export var activeTrigger;
 var activeCamera;
-var hero;
+export var hero;
 //var inputTypes = [ "movement", "dialogue" ]
 
 LoadDialogueLabels();
@@ -83,8 +84,12 @@ game.start(loader).then(function() {
 
    console.log("Map and all actors loaded.");
    UpdateCam();
-   inputMode = inputModes.moving;
+   g.inputMode = g.inputModes.moving;
 });
+
+export function SetActiveTrigger(tgtCell: ex.Cell){
+   activeTrigger = tgtCell;
+}
 
 function LoadDialogueLabels(){
    var dialogueLabel1 = new ex.Label("", 110, game.getDrawHeight() - 130, "Arial");
@@ -112,7 +117,7 @@ function LoadDialogueLabels(){
 function TriggerSetup(){
    var tc1 = new TriggerCell(tm.getCell(8, 4));
    tc1.isTrigger = true;
-   tc1.triggerType = sceneType.dialogue;
+   tc1.triggerType = g.sceneType.dialogue;
    var placement = tc1.index;
    tc1.dialogueText = [
 "A crushing pain envelops your chest as you pass through the",
@@ -128,7 +133,7 @@ function TriggerSetup(){
 
 }
 
-function UpdateCam(){
+export function UpdateCam(){
       var target = hero;
       //console.log("update");
       //activeCamera.actions.clearActions();
@@ -136,7 +141,7 @@ function UpdateCam(){
       activeCamera.y = target.y;
 }
 
-class Hero extends ex.Actor{
+/* class Hero extends ex.Actor{
    public update(engine: ex.Engine, delta: number){
       super.update(engine, delta);
       if(inputMode == inputModes.moving){
@@ -184,16 +189,16 @@ class Hero extends ex.Actor{
 
   
 
-  CheckCollision(direction: directions){
+  CheckCollision(direction: g.directions){
       var _xoffset = 0;
       var _yoffset = 0;
-      if(direction == directions.right)
+      if(direction == g.directions.right)
          _xoffset = 32;
-      else if(direction == directions.left)
+      else if(direction == g.directions.left)
          _xoffset = -32;
-      else if(direction == directions.up)
+      else if(direction == g.directions.up)
          _yoffset = -32;
-      else if(direction == directions.down)
+      else if(direction == g.directions.down)
          _yoffset = 32;
 
          var targetCell = tm.getCellByPoint(this.x + _xoffset, this.y + _yoffset);   
@@ -207,8 +212,8 @@ class Hero extends ex.Actor{
             if(targetCell.isTrigger && targetCell.fired == false){
                activeTrigger = targetCell;
                switch(targetCell.triggerType){
-                  case sceneType.dialogue :{
-                     inputMode = inputModes.dialogue;
+                  case g.sceneType.dialogue :{
+                     g.inputMode = g.inputModes.dialogue;
                      targetCell.TurnDialoguePage();
                      //targetCell.pageOffset += 4;
                      diaMap.y = hero.y + 80;
@@ -229,14 +234,14 @@ class Hero extends ex.Actor{
          }
   }
 }
-
+ */
 
 class TriggerCell extends ex.Cell {
    constructor(conCell: ex.Cell){ 
       super(conCell.x, conCell.y, conCell.width, conCell.height, conCell.index, conCell.solid, conCell.sprites);
    }
    isTrigger: boolean = true
-   triggerType: sceneType = sceneType.dialogue;
+   triggerType: g.sceneType = g.sceneType.dialogue;
    triggerOnce: boolean = true
    fired: boolean = false
    //tempText: string = "FILL ME IN"
@@ -254,7 +259,7 @@ class TriggerCell extends ex.Cell {
 
    EndDialogue(){
       //diaMap.visible = false;
-      inputMode = inputModes.moving;
+      g.inputMode = g.inputModes.moving;
       return;
    }
 

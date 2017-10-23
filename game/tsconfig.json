@@ -1,9 +1,9 @@
 {
    "compilerOptions": {
       "target": "es5",
-      "module": "commonjs"
-   },
-   "files": [
-      "./actors/hero.ts"
-   ]
+      "module": "commonjs",
+      "removeComments": true,
+      "moduleResolution": "node"
+   }
+   
 }
