@@ -7,6 +7,9 @@ var game = new ex.Engine({
    canvasElementId: 'game'
 });
 
+enum inputModes { moving, dialogue, loading }
+enum sceneType { dialogue }
+enum directions { up, left, down, right }
 //var scene1 = new ex.Scene;
 //ar rootScene = ex.Scene;
 //var cam = ex.BaseCamera;
@@ -31,7 +34,7 @@ for(var asset in resources){
 //globals//
 var tm;
 var diaMap;
-var inputMode = "loading";
+var inputMode = inputModes.loading;
 var dialogueLabels;
 var activeTrigger;
 var activeCamera;
@@ -80,7 +83,7 @@ game.start(loader).then(function() {
 
    console.log("Map and all actors loaded.");
    UpdateCam();
-   inputMode = "movement";
+   inputMode = inputModes.moving;
 });
 
 function LoadDialogueLabels(){
@@ -109,7 +112,7 @@ function LoadDialogueLabels(){
 function TriggerSetup(){
    var tc1 = new TriggerCell(tm.getCell(8, 4));
    tc1.isTrigger = true;
-   tc1.triggerType = "dialogue";
+   tc1.triggerType = sceneType.dialogue;
    var placement = tc1.index;
    tc1.dialogueText = [
 "A crushing pain envelops your chest as you pass through the",
@@ -136,12 +139,12 @@ function UpdateCam(){
 class Hero extends ex.Actor{
    public update(engine: ex.Engine, delta: number){
       super.update(engine, delta);
-      if(inputMode == "movement"){
+      if(inputMode == inputModes.moving){
          //var tick = new ex.Timer(UpdateCam, 0.5, false);
          //tick.update(engine, delta);
          //UpdateCam();
          if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){//} isKeyDown(ex.Input.Keys.Right)) {
-             if(this.CheckCollision("right")){
+             if(this.CheckCollision(directions.right)){
               
                
                this.x += 32;
@@ -149,27 +152,25 @@ class Hero extends ex.Actor{
            }
         }
         else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Left)){
-         if(this.CheckCollision("left")) 
+         if(this.CheckCollision(directions.left)) 
          
          
          this.x -= 32;
          UpdateCam();
              }
        else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Up)){
-          if(this.CheckCollision("up"))
+          if(this.CheckCollision(directions.up))
              this.y -= 32;
              UpdateCam();
-             
        }
          else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Down)){
-          if(this.CheckCollision("down")) 
+          if(this.CheckCollision(directions.down)) 
              this.y += 32;
-
              UpdateCam();
          }
          
       }
-      else if(inputMode == "dialogue"){
+      else if(inputMode == inputModes.dialogue){
          if(engine.input.keyboard.wasPressed(ex.Input.Keys.Z)){
             if(!activeTrigger.dialogueText[activeTrigger.pageOffset]){
                diaMap.x = -8000;
@@ -183,16 +184,16 @@ class Hero extends ex.Actor{
 
   
 
-  CheckCollision(direction: string){
+  CheckCollision(direction: directions){
       var _xoffset = 0;
       var _yoffset = 0;
-      if(direction == "right")
+      if(direction == directions.right)
          _xoffset = 32;
-      else if(direction == "left")
+      else if(direction == directions.left)
          _xoffset = -32;
-      else if(direction == "up")
+      else if(direction == directions.up)
          _yoffset = -32;
-      else if(direction == "down")
+      else if(direction == directions.down)
          _yoffset = 32;
 
          var targetCell = tm.getCellByPoint(this.x + _xoffset, this.y + _yoffset);   
@@ -206,8 +207,8 @@ class Hero extends ex.Actor{
             if(targetCell.isTrigger && targetCell.fired == false){
                activeTrigger = targetCell;
                switch(targetCell.triggerType){
-                  case "dialogue" :{
-                     inputMode = "dialogue";
+                  case sceneType.dialogue :{
+                     inputMode = inputModes.dialogue;
                      targetCell.TurnDialoguePage();
                      //targetCell.pageOffset += 4;
                      diaMap.y = hero.y + 80;
@@ -235,7 +236,7 @@ class TriggerCell extends ex.Cell {
       super(conCell.x, conCell.y, conCell.width, conCell.height, conCell.index, conCell.solid, conCell.sprites);
    }
    isTrigger: boolean = true
-   triggerType: string = "dialogue"
+   triggerType: sceneType = sceneType.dialogue;
    triggerOnce: boolean = true
    fired: boolean = false
    //tempText: string = "FILL ME IN"
@@ -253,7 +254,7 @@ class TriggerCell extends ex.Cell {
 
    EndDialogue(){
       //diaMap.visible = false;
-      inputMode = "movement";
+      inputMode = inputModes.moving;
       return;
    }
 
