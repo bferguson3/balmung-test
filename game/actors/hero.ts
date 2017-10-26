@@ -6,10 +6,8 @@ export class Hero extends ex.Actor{
    public update(engine: ex.Engine, delta: number){
       super.update(engine, delta);
       if(g.inputMode == g.inputModes.moving){
-         //var tick = new ex.Timer(UpdateCam, 0.5, false);
-         //tick.update(engine, delta);
-         //UpdateCam();
-         if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){//} isKeyDown(ex.Input.Keys.Right)) {
+        
+         if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){
              if(this.CheckCollision(g.directions.right)){
                this.x += 32;
                manager.UpdateCam();
@@ -17,11 +15,9 @@ export class Hero extends ex.Actor{
         }
         else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Left)){
          if(this.CheckCollision(g.directions.left)) 
-         
-         
-         this.x -= 32;
-         manager.UpdateCam();
-             }
+              this.x -= 32;
+              manager.UpdateCam();
+         }
        else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Up)){
           if(this.CheckCollision(g.directions.up))
              this.y -= 32;
@@ -32,7 +28,6 @@ export class Hero extends ex.Actor{
              this.y += 32;
              manager.UpdateCam();
          }
-         
       }
       else if(g.inputMode == g.inputModes.dialogue){
          if(engine.input.keyboard.wasPressed(ex.Input.Keys.Z)){
@@ -43,10 +38,7 @@ export class Hero extends ex.Actor{
             manager.activeTrigger.TurnDialoguePage();  //clears text.
          }
       }
-      
    }
-
-  
 
   CheckCollision(direction: g.directions){
       var _xoffset = 0;
@@ -69,12 +61,11 @@ export class Hero extends ex.Actor{
          }
          else{
             if(targetCell.isTrigger && targetCell.fired == false){
-               manager.SetActiveTrigger(targetCell);//activeTrigger = targetCell;
+               manager.SetActiveTrigger(targetCell);
                switch(targetCell.triggerType){
                   case g.sceneType.dialogue :{
                      g.inputMode = g.inputModes.dialogue;
                      targetCell.TurnDialoguePage();
-                     //targetCell.pageOffset += 4;
                      manager.diaMap.y = this.y + 80;
                      manager.diaMap.x = this.x - manager.game.getDrawWidth()/2 + 80;
                      var offsettxt = 50;

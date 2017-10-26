@@ -9,13 +9,6 @@ export var game = new ex.Engine({
    canvasElementId: 'game'
 });
 
-//enum inputModes { moving, dialogue, loading }
-
-//var scene1 = new ex.Scene;
-//ar rootScene = ex.Scene;
-//var cam = ex.BaseCamera;
-
-
 var resources = {
    map: new TiledResource("./game/angband-town-test.json"),
    textureMap: new ex.Texture("./game/assets/angband32.png"),
@@ -40,9 +33,14 @@ export var dialogueLabels;
 export var activeTrigger;
 var activeCamera;
 export var hero;
-//var inputTypes = [ "movement", "dialogue" ]
 
 LoadDialogueLabels();
+
+var textTick = new ex.Timer(callThis, 100, false); 
+game.add(textTick);
+function callThis(){
+   console.log("ticked");
+}
 
 game.start(loader).then(function() {
    
@@ -55,6 +53,7 @@ game.start(loader).then(function() {
    hero = new Hero(400, 240, 32, 32);
    var heroSprite = graphicsMap.getSprite(946); //sprite index of avatar
    hero.addDrawing(heroSprite);
+   
 
    tm = resources.map.getTileMap();
 
@@ -65,9 +64,40 @@ game.start(loader).then(function() {
    tm.data.forEach(tile => {
       //toggle collision for anything that's 830-840 ID (wall sprites)
       tile.sprites.forEach(tilespr => {
-         if(tilespr.spriteId >= 830 && tilespr.spriteId <= 840){
-            tile.solid = true;
+         if(tilespr.spriteSheetKey == 4249){
+            //UPC terrain
+            if(tilespr.spriteId == 634 || tilespr.spriteId == 637){
+               //tree base
+               tile.solid = true;
+            }
+            else if(tilespr.spriteId >= 408 && tilespr.spriteId <= 413){
+               tile.solid = true;
+            }
+            else if(tilespr.spriteId >= 440 && tilespr.spriteId <= 445){
+               tile.solid = true;
+            }
          }
+         else if(tilespr.spriteSheetKey == 1){
+            //Roguelike set
+            if(tilespr.spriteId >= 830 && tilespr.spriteId <= 840){
+               //grey stone walls w/ jaggies
+               tile.solid = true;
+            }
+         }
+         else if(tilespr.spriteSheetKey == 1081){
+            //Angband
+            if(tilespr.spriteId == 837){
+               tile.solid = true;
+            }
+         }
+         else if(tilespr.spriteSheetKey == 3001){
+            //cool angular tileset
+         }
+         else{
+            //console.log(tilespr.spriteSheetKey);
+         }
+         //
+         
       });
    });
    
@@ -83,6 +113,7 @@ game.start(loader).then(function() {
    activeCamera = game.currentScene.camera;
 
    console.log("Map and all actors loaded.");
+
    UpdateCam();
    g.inputMode = g.inputModes.moving;
 });
@@ -104,12 +135,10 @@ function LoadDialogueLabels(){
    dialogueLabel3.color = new ex.Color(133, 91, 0);
    dialogueLabel3.bold = true;
    dialogueLabel3.scale = new ex.Vector(2, 2);
-   
    var dialogueLabel4 = new ex.Label("", 110, game.getDrawHeight() - 40, "Arial");
    dialogueLabel4.color = new ex.Color(133, 91, 0);
    dialogueLabel4.bold = true;
    dialogueLabel4.scale = new ex.Vector(2, 2);
-   //dialogueLabel.maxWidth = 640;
    dialogueLabels = [dialogueLabel1, dialogueLabel2, dialogueLabel3, dialogueLabel4];
    
 }
@@ -128,113 +157,15 @@ function TriggerSetup(){
 "hazy and your vision grows dark. You feel like you have",
 "never felt pain at all before this moment..."
    ];
-    //"shattered door frame. A halfling is this run-down shop's only inhabitant,"
    tm.data[tc1.index] = tc1;
 
 }
 
 export function UpdateCam(){
       var target = hero;
-      //console.log("update");
-      //activeCamera.actions.clearActions();
       activeCamera.x = target.x;
       activeCamera.y = target.y;
 }
-
-/* class Hero extends ex.Actor{
-   public update(engine: ex.Engine, delta: number){
-      super.update(engine, delta);
-      if(inputMode == inputModes.moving){
-         //var tick = new ex.Timer(UpdateCam, 0.5, false);
-         //tick.update(engine, delta);
-         //UpdateCam();
-         if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){//} isKeyDown(ex.Input.Keys.Right)) {
-             if(this.CheckCollision(directions.right)){
-              
-               
-               this.x += 32;
-               UpdateCam();
-           }
-        }
-        else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Left)){
-         if(this.CheckCollision(directions.left)) 
-         
-         
-         this.x -= 32;
-         UpdateCam();
-             }
-       else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Up)){
-          if(this.CheckCollision(directions.up))
-             this.y -= 32;
-             UpdateCam();
-       }
-         else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Down)){
-          if(this.CheckCollision(directions.down)) 
-             this.y += 32;
-             UpdateCam();
-         }
-         
-      }
-      else if(inputMode == inputModes.dialogue){
-         if(engine.input.keyboard.wasPressed(ex.Input.Keys.Z)){
-            if(!activeTrigger.dialogueText[activeTrigger.pageOffset]){
-               diaMap.x = -8000;
-               activeTrigger.EndDialogue();
-            }
-            activeTrigger.TurnDialoguePage();  //clears text.
-         }
-      }
-      
-   }
-
-  
-
-  CheckCollision(direction: g.directions){
-      var _xoffset = 0;
-      var _yoffset = 0;
-      if(direction == g.directions.right)
-         _xoffset = 32;
-      else if(direction == g.directions.left)
-         _xoffset = -32;
-      else if(direction == g.directions.up)
-         _yoffset = -32;
-      else if(direction == g.directions.down)
-         _yoffset = 32;
-
-         var targetCell = tm.getCellByPoint(this.x + _xoffset, this.y + _yoffset);   
-         if(!targetCell){
-          return false; //blocked
-         }
-         if(targetCell.solid){
-            return false;
-         }
-         else{
-            if(targetCell.isTrigger && targetCell.fired == false){
-               activeTrigger = targetCell;
-               switch(targetCell.triggerType){
-                  case g.sceneType.dialogue :{
-                     g.inputMode = g.inputModes.dialogue;
-                     targetCell.TurnDialoguePage();
-                     //targetCell.pageOffset += 4;
-                     diaMap.y = hero.y + 80;
-                     diaMap.x = hero.x - game.getDrawWidth()/2 + 80;
-                     var offsettxt = 50;
-                     dialogueLabels.forEach(element => {
-                        element.x = diaMap.x + 30;
-                        element.y = diaMap.y + offsettxt;
-                        offsettxt += 30;
-                     });
-                     targetCell.fired = true;
-                     
-                     break;
-                  }
-               }
-            }
-            return true; //true = can pass through.
-         }
-  }
-}
- */
 
 class TriggerCell extends ex.Cell {
    constructor(conCell: ex.Cell){ 
@@ -244,7 +175,6 @@ class TriggerCell extends ex.Cell {
    triggerType: g.sceneType = g.sceneType.dialogue;
    triggerOnce: boolean = true
    fired: boolean = false
-   //tempText: string = "FILL ME IN"
    dialogueText: string[] 
    pageOffset: number = 0
 
@@ -258,7 +188,6 @@ class TriggerCell extends ex.Cell {
    }
 
    EndDialogue(){
-      //diaMap.visible = false;
       g.inputMode = g.inputModes.moving;
       return;
    }
