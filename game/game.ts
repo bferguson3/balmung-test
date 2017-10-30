@@ -3,29 +3,6 @@ import { g } from "./globals";
 import TiledResource from '../src';
 import { Hero, TriggerCell } from './actors';
 
-/* export class TileMap2 extends ex.TileMap{
-   public update(engine, delta) {
-      this.emit('preupdate', new ex.Events.PreUpdateEvent(engine, delta, this));
-      var worldCoordsUpperLeft = engine.screenToWorldCoordinates(new Algebra_16.Vector(0, 0));
-      var worldCoordsLowerRight = engine.screenToWorldCoordinates(new Algebra_16.Vector(engine.canvas.clientWidth, engine.canvas.clientHeight));
-      
-      this._onScreenXStart = Math.max(Math.floor(worldCoordsUpperLeft.x / this.cellWidth) - 2, 0);
-      this._onScreenYStart = Math.max(Math.floor((worldCoordsUpperLeft.y - this.y) / this.cellHeight) - 2, 0);
-      this._onScreenXEnd = Math.max(Math.floor(worldCoordsLowerRight.x / this.cellWidth) + 2, 0);
-      this._onScreenYEnd = Math.max(Math.floor((worldCoordsLowerRight.y - this.y) / this.cellHeight) + 2, 0);
-      this.emit('postupdate', new ex.Events.PostUpdateEvent(engine, delta, this));
-  };
-} */
-
-export class TileMap2 extends ex.TileMap{
-   //this : any;
-   public postupdate(engine, delta) {
-      //this as any;      
-      let castThis = this as any;
-      castThis._onScreenXStart = 0;
-   }
-}
-
 export class game2 extends ex.Engine{ 
   
    /* public screenToWorldCoordinates(point: ex.Vector): ex.Vector {
@@ -76,14 +53,20 @@ for(var asset in resources){
 }
 
 //globals//
-export var tm : TileMap2;
-export var diaMap : TileMap2;
-var combatWindows : TileMap2;
+export var tm;// : TileMap2;
+export var diaMap;// : TileMap2;
+var combatWindows;// : TileMap2;
 g.inputMode = g.inputModes.loading;
 export var dialogueLabels;
 export var activeTrigger;
 var activeCamera;
 export var hero;
+
+
+
+export function FixOffset(){
+   combatWindows._onScreenXStart = 0;
+}
 
 LoadDialogueLabels();
 
@@ -110,7 +93,7 @@ game.start(loader).then(function() {
    diaMap.y = game.getDrawHeight() - 180;
    diaMap.x = -8000;   
    combatWindows = resources.combatWinMap.getTileMap();
-
+   
    /*Init Hero*/
    hero = new Hero(400, 240, 32, 32);
    var heroSprite = graphicsMap.getSprite(946); //sprite index of avatar
@@ -135,7 +118,11 @@ game.start(loader).then(function() {
    activeCamera = game.currentScene.camera;   
    UpdateCam();
    g.inputMode = g.inputModes.moving;
+   
+   //if(combatWindows)
+   combatWindows.on('postupdate', FixOffset());
 });
+
 
 export function SetActiveTrigger(tgtCell: ex.Cell){
    activeTrigger = tgtCell;
@@ -253,5 +240,5 @@ export function LoadWindows(){
    combatWindows.y = hero.y - (4 * 32);//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
    game.currentScene.add(combatWindows);
 
-   console.log(combatWindows);
+   //console.log(combatWindows);
 }
