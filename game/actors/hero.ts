@@ -61,6 +61,8 @@ export class Hero extends ex.Actor{
          }
          else{
             if(targetCell.isTrigger && targetCell.fired == false){
+               //I encountered a trigger sell that has not fired.
+               
                manager.SetActiveTrigger(targetCell);
                switch(targetCell.triggerType){
                   case g.sceneType.dialogue :{
@@ -75,6 +77,12 @@ export class Hero extends ex.Actor{
                         offsettxt += 30;
                      });
                      targetCell.fired = true;
+                     
+                     break;
+                  }
+                  case g.sceneType.combat: {
+                     g.inputMode = g.inputModes.loading;
+                     targetCell.StartCombat();
                      
                      break;
                   }
