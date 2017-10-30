@@ -81,7 +81,7 @@ export class Hero extends ex.Actor{
                      break;
                   }
                   case g.sceneType.combat: {
-                     g.inputMode = g.inputModes.loading;
+                     //g.inputMode = g.inputModes.loading;
                      targetCell.StartCombat();
                      
                      break;
