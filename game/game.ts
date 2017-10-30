@@ -3,33 +3,7 @@ import { g } from "./globals";
 import TiledResource from '../src';
 import { Hero, TriggerCell } from './actors';
 
-export class game2 extends ex.Engine{ 
-  
-   /* public screenToWorldCoordinates(point: ex.Vector): ex.Vector {
-      
-      let newX = point.x;
-      let newY = point.y;
-        
-      // transform back to world space
-      newX = (newX / this.canvas.clientWidth) * this.getDrawWidth();
-      newY = (newY / this.canvas.clientHeight) * this.getDrawHeight();
-     // transform based on zoom
-       newX = newX - this.getDrawWidth() / 2;
-       newY = newY - this.getDrawHeight() / 2;
-        //console.log(this.canvas.clientWidth);
-              // shift by focus
-      if (this.currentScene && this.currentScene.camera) {
-         var focus = this.currentScene.camera.getFocus();
-         newX += focus.x;
-         newY += focus.y;
-      }
-        
-      return new ex.Vector(Math.floor(newX), Math.floor(newY));
-   } */
-   
-}
-
-export var game = new game2({
+export var game = new ex.Engine({
    width: 800,
    height: 600,
    canvasElementId: 'game'
@@ -58,11 +32,14 @@ export var diaMap;// : TileMap2;
 var combatWindows;// : TileMap2;
 g.inputMode = g.inputModes.loading;
 export var dialogueLabels;
+var moveSqLeftLabel;
 export var activeTrigger;
 var activeCamera;
 export var hero;
 
-
+export function UpdateCombatUI(){
+   moveSqLeftLabel.text = "Moves: " + hero.moveLeft;
+}
 
 export function FixOffset(){
    combatWindows._onScreenXStart = 0;
@@ -120,7 +97,9 @@ game.start(loader).then(function() {
    g.inputMode = g.inputModes.moving;
    
    //if(combatWindows)
-   combatWindows.on('postupdate', FixOffset());
+   combatWindows.on("postupdate", function (evt: ex.Events.PostUpdateEvent){
+         FixOffset();
+   });
 });
 
 
@@ -147,6 +126,14 @@ function LoadDialogueLabels(){
    dialogueLabel4.scale = new ex.Vector(2, 2);
    
    dialogueLabels = [dialogueLabel1, dialogueLabel2, dialogueLabel3, dialogueLabel4];
+}
+
+function LoadMoveLabel(){
+   moveSqLeftLabel = new ex.Label("Moves: 2", hero.x+300, hero.y-160, "Arial");
+   moveSqLeftLabel.color = new ex.Color(255, 255, 255);
+   moveSqLeftLabel.bold = true;
+   moveSqLeftLabel.scale = new ex.Vector(2,2);
+   game.currentScene.add(moveSqLeftLabel);
 }
 
 function ConfigureCollision(){
@@ -236,9 +223,9 @@ export function UpdateCam(){
 }
 
 export function LoadWindows(){
-   combatWindows.x = hero.x - (8 * 32);//hero.x;//activeCamera.x + (8*16);//64 + (8 * 16);
-   combatWindows.y = hero.y - (4 * 32);//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
+   combatWindows.x = hero.x - (8 * 32) - 16;//hero.x;//activeCamera.x + (8*16);//64 + (8 * 16);
+   combatWindows.y = hero.y - (4 * 32) - 64;//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
    game.currentScene.add(combatWindows);
-
+   LoadMoveLabel();
    //console.log(combatWindows);
 }

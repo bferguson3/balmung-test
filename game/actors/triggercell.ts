@@ -34,9 +34,11 @@ export class TriggerCell extends ex.Cell {
    }
 
    StartCombat(){
-      //g.inputMode = g.inputModes.loading;
+      g.inputMode = g.inputModes.loading;
       g.inCombat = true;
       manager.LoadWindows();
+      g.inputMode = g.inputModes.combatMove;
+      //manager.LoadMoveLabel();
    }
 
 }

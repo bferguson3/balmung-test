@@ -3,6 +3,8 @@ import { g } from '../globals';
 import * as manager from '../game';
 
 export class Hero extends ex.Actor{
+			public moveLeft : number = 2;
+
    public update(engine: ex.Engine, delta: number){
       super.update(engine, delta);
       if(g.inputMode == g.inputModes.moving){
@@ -29,6 +31,42 @@ export class Hero extends ex.Actor{
              manager.UpdateCam();
          }
       }
+      else if(g.inputMode == g.inputModes.combatMove){
+         if(this.moveLeft > 0){
+         if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){
+            if(this.CheckCollision(g.directions.right)){
+														this.x += 32;
+														this.moveLeft--;
+														manager.UpdateCombatUI();
+              //manager.UpdateCam();
+          }
+       }
+       else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Left)){
+        if(this.CheckCollision(g.directions.left)) 
+													this.x -= 32;
+													
+													this.moveLeft--;
+
+													manager.UpdateCombatUI();
+             //manager.UpdateCam();
+        }
+      else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Up)){
+         if(this.CheckCollision(g.directions.up))
+												this.y -= 32;
+												
+												this.moveLeft--;
+												manager.UpdateCombatUI();
+            //manager.UpdateCam();
+      }
+        else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Down)){
+         if(this.CheckCollision(g.directions.down)) 
+            this.y += 32;
+												this.moveLeft--;
+												manager.UpdateCombatUI();
+           // manager.UpdateCam();
+        }
+      }
+					}
       else if(g.inputMode == g.inputModes.dialogue){
          if(engine.input.keyboard.wasPressed(ex.Input.Keys.Z)){
             if(!manager.activeTrigger.dialogueText[manager.activeTrigger.pageOffset]){
