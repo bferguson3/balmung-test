@@ -106,9 +106,10 @@ export class Hero extends ex.Actor{
 										g.activeMoveZone.forEach(moveTile => {
 											if(targetCell.getBounds().collides(moveTile.getBounds())){
 												canMove = true;
-										  return canMove;
-											}	
-										});	
+										  }	
+										});
+										return canMove;
+										
 									}
 									
 									if(targetCell.solid){
