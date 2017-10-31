@@ -5,4 +5,6 @@ export namespace g {
    
    export var inputMode: inputModes;
    export var inCombat: boolean;
+
+   export var activeMoveZone: ex.Actor[];
 }

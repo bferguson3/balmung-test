@@ -5,6 +5,9 @@ import * as manager from '../game';
 export class Hero extends ex.Actor{
 			public moveLeft : number = 2;
 
+			//////
+			
+///////
    public update(engine: ex.Engine, delta: number){
       super.update(engine, delta);
       if(g.inputMode == g.inputModes.moving){
@@ -36,8 +39,8 @@ export class Hero extends ex.Actor{
          if(engine.input.keyboard.wasPressed(ex.Input.Keys.Right)){
             if(this.CheckCollision(g.directions.right)){
 														this.x += 32;
-														this.moveLeft--;
-														manager.UpdateCombatUI();
+														//this.moveLeft--;
+														//manager.UpdateCombatUI();
               //manager.UpdateCam();
           }
        }
@@ -45,24 +48,24 @@ export class Hero extends ex.Actor{
         if(this.CheckCollision(g.directions.left)) 
 													this.x -= 32;
 													
-													this.moveLeft--;
+													//this.moveLeft--;
 
-													manager.UpdateCombatUI();
+													//manager.UpdateCombatUI();
              //manager.UpdateCam();
         }
       else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Up)){
          if(this.CheckCollision(g.directions.up))
 												this.y -= 32;
 												
-												this.moveLeft--;
-												manager.UpdateCombatUI();
+												//this.moveLeft--;
+												//manager.UpdateCombatUI();
             //manager.UpdateCam();
       }
         else if(engine.input.keyboard.wasPressed(ex.Input.Keys.Down)){
          if(this.CheckCollision(g.directions.down)) 
             this.y += 32;
-												this.moveLeft--;
-												manager.UpdateCombatUI();
+												//this.moveLeft--;
+												//manager.UpdateCombatUI();
            // manager.UpdateCam();
         }
       }
@@ -75,10 +78,12 @@ export class Hero extends ex.Actor{
             }
             manager.activeTrigger.TurnDialoguePage();  //clears text.
          }
-      }
+						}
+						//this.draw(manager._spriteCanvas.getContext('2d'), 1);
    }
 
-  CheckCollision(direction: g.directions){
+  CheckCollision(direction: g.directions): boolean {
+
       var _xoffset = 0;
       var _yoffset = 0;
       if(direction == g.directions.right)
@@ -93,8 +98,20 @@ export class Hero extends ex.Actor{
          var targetCell = manager.tm.getCellByPoint(this.x + _xoffset, this.y + _yoffset);   
          if(!targetCell){
           return false; //blocked
-         }
-         if(targetCell.solid){
+									}
+									//if(targetCell.getBounds.collides())
+									if(g.inCombat)
+									{
+										var canMove = false;
+										g.activeMoveZone.forEach(moveTile => {
+											if(targetCell.getBounds().collides(moveTile.getBounds())){
+												canMove = true;
+										  return canMove;
+											}	
+										});	
+									}
+									
+									if(targetCell.solid){
             return false;
          }
          else{

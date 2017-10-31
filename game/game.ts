@@ -13,7 +13,8 @@ var resources = {
    map: new TiledResource("./game/angband-town-test.json"),
    textureMap: new ex.Texture("./game/assets/angband32.png"),
    dialogueWin: new TiledResource("./game/parchment-window-tilemap.json"),
-   combatWinMap: new TiledResource("./game/battle-gui-windows.json")
+   combatWinMap: new TiledResource("./game/battle-gui-windows.json"),
+   greenSqImg: new ex.Texture("./game/assets/greensquare.gif")
 }
 
 var graphicsMap = new ex.SpriteSheet(resources.textureMap, 32, 60, 32, 32);
@@ -26,11 +27,10 @@ for(var asset in resources){
    }
 }
 
-//globals//
 export var tm;// : TileMap2;
 export var diaMap;// : TileMap2;
 var combatWindows;// : TileMap2;
-g.inputMode = g.inputModes.loading;
+
 export var dialogueLabels;
 var moveSqLeftLabel;
 export var activeTrigger;
@@ -84,6 +84,7 @@ game.start(loader).then(function() {
    game.goToScene("townTestScene");
    townTestScene.add(tm);
    townTestScene.add(hero);
+   hero.z = 1;
    townTestScene.add(diaMap);
 
    dialogueLabels.forEach(ele =>{
@@ -128,13 +129,7 @@ function LoadDialogueLabels(){
    dialogueLabels = [dialogueLabel1, dialogueLabel2, dialogueLabel3, dialogueLabel4];
 }
 
-function LoadMoveLabel(){
-   moveSqLeftLabel = new ex.Label("Moves: 2", hero.x+300, hero.y-160, "Arial");
-   moveSqLeftLabel.color = new ex.Color(255, 255, 255);
-   moveSqLeftLabel.bold = true;
-   moveSqLeftLabel.scale = new ex.Vector(2,2);
-   game.currentScene.add(moveSqLeftLabel);
-}
+
 
 function ConfigureCollision(){
    tm.data.forEach(tile => {
@@ -222,10 +217,70 @@ export function UpdateCam(){
    }
 }
 
-export function LoadWindows(){
+function CombatFadeOut(){
+   console.log("Fading out...");
+   //fade out ainimation
+   var secondTimer = new ex.Timer(function AddSecond() {
+      console.log("Fading in...");
+      //fade in animation
+      //activate GUI windows
+      
+      LoadCombatGUI();
+
+   }, 1000, false);
+   game.currentScene.add(secondTimer);
+   var oneSecond = new ex.Timer(InitializeCombat, 2000, false);
+   game.currentScene.add(oneSecond);
+
+}
+
+function InitializeCombat(){
+   console.log("Initilizing combat...");
+   //Determine action order
+   //Start action
+   //temp: player 1 go
+   g.inputMode = g.inputModes.combatMove;
+   //color grid
+   HighlightMoveRange(hero);
+}
+
+function HighlightMoveRange(npc: Hero){
+   var moveableZone = new ex.Sprite(resources.greenSqImg, 0, 0, 32, 32);
+   moveableZone.opacity(0.3);
+   g.activeMoveZone = [];
+   for(var j = -npc.moveLeft; j <= npc.moveLeft; j++){
+      for(var c = -npc.moveLeft; c <= npc.moveLeft; c++){
+         if(Math.abs(j) + Math.abs(c) <= npc.moveLeft){
+            g.activeMoveZone.push(new ex.Actor(npc.x + (j*32), npc.y + (c*32), 32, 32));
+         }
+      }
+   }
+   g.activeMoveZone.forEach(piece => {
+      piece.addDrawing(moveableZone);
+      game.currentScene.add(piece);
+   });
+}
+
+
+function LoadCombatGUI(){
    combatWindows.x = hero.x - (8 * 32) - 16;//hero.x;//activeCamera.x + (8*16);//64 + (8 * 16);
-   combatWindows.y = hero.y - (4 * 32) - 64;//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
+   combatWindows.y = hero.y - (4 * 32) - 92;//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
    game.currentScene.add(combatWindows);
-   LoadMoveLabel();
-   //console.log(combatWindows);
+   moveSqLeftLabel = new ex.Label("Moves: 2", hero.x+300, hero.y-160, "Arial");
+   moveSqLeftLabel.color = new ex.Color(255, 255, 255);
+   moveSqLeftLabel.bold = true;
+   moveSqLeftLabel.scale = new ex.Vector(2,2);
+   game.currentScene.add(moveSqLeftLabel);
+   console.log("Combat GUI loaded.");
+   //InitializeCombat();
+   //wait one second for fade in to finish
+   }
+
+export function LoadCombat(){
+   //fade out, 
+   CombatFadeOut();
+   //wait 1s then fade in w/ gui,
+   //wait 1s then enable input
+
+   //DISPLAY GUI CODE:
 }
