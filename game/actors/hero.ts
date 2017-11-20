@@ -4,7 +4,13 @@ import * as manager from '../game';
 
 export class Hero extends ex.Actor{
 			public moveLeft : number = 2;
-
+			
+			public myname : string;
+			public level : number;
+			public maxHP : number;
+			public curHP : number;
+			public maxMP : number;
+			public curMP : number;
 			//////
 			
 ///////

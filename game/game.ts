@@ -10,10 +10,10 @@ export var game = new ex.Engine({
 });
 
 var resources = {
-   map: new TiledResource("./game/angband-town-test.json"),
+   map: new TiledResource("./game/assets/maps/angband-town-test.json"),
    textureMap: new ex.Texture("./game/assets/angband32.png"),
-   dialogueWin: new TiledResource("./game/parchment-window-tilemap.json"),
-   combatWinMap: new TiledResource("./game/battle-gui-windows.json"),
+   dialogueWin: new TiledResource("./game/assets/maps/parchment-window-tilemap.json"),
+   combatWinMap: new TiledResource("./game/assets/maps/battle-gui-windows.json"),
    greenSqImg: new ex.Texture("./game/assets/greensquare.gif")
 }
 
@@ -32,13 +32,15 @@ export var diaMap;// : TileMap2;
 var combatWindows;// : TileMap2;
 
 export var dialogueLabels;
-var moveSqLeftLabel;
+var partyUILabels = [];
+var combatFeedbackLabels = [];
+var combatSelections = [];
 export var activeTrigger;
 var activeCamera;
-export var hero;
+export var hero = [];
 
 export function UpdateCombatUI(){
-   moveSqLeftLabel.text = "Moves: " + hero.moveLeft;
+   //moveSqLeftLabel.text = "Moves: " + hero.moveLeft;
 }
 
 export function FixOffset(){
@@ -72,9 +74,12 @@ game.start(loader).then(function() {
    combatWindows = resources.combatWinMap.getTileMap();
    
    /*Init Hero*/
-   hero = new Hero(400, 240, 32, 32);
+   hero[0] = new Hero(400, 240, 32, 32);
+   hero[0].myname = "Roddick";
+   hero[0].curHP = 100; hero[0].maxHP = 100;
+   hero[0].curMP = 10; hero[0].maxMP = 10;
    var heroSprite = graphicsMap.getSprite(946); //sprite index of avatar
-   hero.addDrawing(heroSprite);   
+   hero[0].addDrawing(heroSprite);   
    /* */
 
    ConfigureCollision();
@@ -83,8 +88,8 @@ game.start(loader).then(function() {
    game.add("townTestScene", townTestScene);
    game.goToScene("townTestScene");
    townTestScene.add(tm);
-   townTestScene.add(hero);
-   hero.z = 1;
+   townTestScene.add(hero[0]);
+   hero[0].z = 1;
    townTestScene.add(diaMap);
 
    dialogueLabels.forEach(ele =>{
@@ -109,22 +114,22 @@ export function SetActiveTrigger(tgtCell: ex.Cell){
 }
 
 function LoadDialogueLabels(){
-   var dialogueLabel1 = new ex.Label("", 110, game.getDrawHeight() - 130, "Arial");
+   var dialogueLabel1 = new ex.Label("", 110, game.getDrawHeight() - 130, "GameFont");
    dialogueLabel1.color = new ex.Color(133, 91, 0);
    dialogueLabel1.bold = true;
-   dialogueLabel1.scale = new ex.Vector(2, 2);
-   var dialogueLabel2 = new ex.Label("", 110, game.getDrawHeight() - 100, "Arial");
+   dialogueLabel1.scale = new ex.Vector(2.2, 2.2);
+   var dialogueLabel2 = new ex.Label("", 110, game.getDrawHeight() - 100, "GameFont");
    dialogueLabel2.color = new ex.Color(133, 91, 0);
    dialogueLabel2.bold = true;
-   dialogueLabel2.scale = new ex.Vector(2, 2);
-   var dialogueLabel3 = new ex.Label("", 110, game.getDrawHeight() - 70, "Arial");
+   dialogueLabel2.scale = new ex.Vector(2.2, 2.2);
+   var dialogueLabel3 = new ex.Label("", 110, game.getDrawHeight() - 70, "GameFont");
    dialogueLabel3.color = new ex.Color(133, 91, 0);
    dialogueLabel3.bold = true;
-   dialogueLabel3.scale = new ex.Vector(2, 2);
-   var dialogueLabel4 = new ex.Label("", 110, game.getDrawHeight() - 40, "Arial");
+   dialogueLabel3.scale = new ex.Vector(2.2, 2.2);
+   var dialogueLabel4 = new ex.Label("", 110, game.getDrawHeight() - 40, "GameFont");
    dialogueLabel4.color = new ex.Color(133, 91, 0);
    dialogueLabel4.bold = true;
-   dialogueLabel4.scale = new ex.Vector(2, 2);
+   dialogueLabel4.scale = new ex.Vector(2.2, 2.2);
    
    dialogueLabels = [dialogueLabel1, dialogueLabel2, dialogueLabel3, dialogueLabel4];
 }
@@ -204,7 +209,7 @@ function TriggerSetup(){
 }
 
 export function UpdateCam(){
-   var target = hero;
+   var target = hero[0];
    
    if(g.inCombat){
          //offset down 2, right 4
@@ -241,7 +246,7 @@ function InitializeCombat(){
    //temp: player 1 go
    g.inputMode = g.inputModes.combatMove;
    //color grid
-   HighlightMoveRange(hero);
+   HighlightMoveRange(hero[0]);
 }
 
 function HighlightMoveRange(npc: Hero){
@@ -263,14 +268,58 @@ function HighlightMoveRange(npc: Hero){
 
 
 function LoadCombatGUI(){
-   combatWindows.x = hero.x - (8 * 32) - 16;//hero.x;//activeCamera.x + (8*16);//64 + (8 * 16);
-   combatWindows.y = hero.y - (4 * 32) - 92;//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
+   combatWindows.x = hero[0].x - (8 * 32) - 16;//hero.x;//activeCamera.x + (8*16);//64 + (8 * 16);
+   combatWindows.y = hero[0].y - (4 * 32) - 92;//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
    game.currentScene.add(combatWindows);
-   moveSqLeftLabel = new ex.Label("Moves: 2", hero.x+300, hero.y-160, "Arial");
-   moveSqLeftLabel.color = new ex.Color(255, 255, 255);
-   moveSqLeftLabel.bold = true;
-   moveSqLeftLabel.scale = new ex.Vector(2,2);
-   game.currentScene.add(moveSqLeftLabel);
+   var doubleVec = new ex.Vector(2.5, 2.5);
+
+   for(var c = 0; c < hero.length; c++){
+      partyUILabels[c] = new ex.Label(hero[c].myname, activeCamera.x + 165, activeCamera.y - 240, "GameFont");
+      partyUILabels[c].color = new ex.Color(255, 255, 255);
+      partyUILabels[c].scale = doubleVec;
+      partyUILabels[c+1] = new ex.Label("HP: " + hero[c].curHP + " / " + hero[c].maxHP, activeCamera.x + 165, activeCamera.y - 210, "GameFont");
+      partyUILabels[c+1].color = new ex.Color(255, 255, 255);
+      partyUILabels[c+1].scale = doubleVec;
+      partyUILabels[c+2] = new ex.Label("MP: " + hero[c].curMP + " / " + hero[c].maxMP, activeCamera.x + 165, activeCamera.y - 180, "GameFont");
+      partyUILabels[c+2].color = new ex.Color(255, 255, 255);
+      partyUILabels[c+2].scale = doubleVec;
+   }
+
+   combatFeedbackLabels[0] = new ex.Label("Combat!", activeCamera.x - 380, activeCamera.y + 205, "GameFont" );
+   combatFeedbackLabels[0].color = ex.Color.White;
+   combatFeedbackLabels[0].scale = doubleVec;
+   combatFeedbackLabels[1] = new ex.Label("It's " + hero[0].myname + "'s turn.", activeCamera.x - 380, activeCamera.y + 240, "GameFont" );
+   combatFeedbackLabels[1].color = ex.Color.White;
+   combatFeedbackLabels[1].scale = doubleVec;
+   combatFeedbackLabels[2] = new ex.Label("", activeCamera.x - 380, activeCamera.y + 275, "GameFont" );
+   combatFeedbackLabels[2].color = ex.Color.White;
+   combatFeedbackLabels[2].scale = doubleVec;
+
+   combatSelections[0] = new ex.Label("Moving...", activeCamera.x + 175, activeCamera.y + 175, "GameFont");
+   combatSelections[0].color = ex.Color.White;
+   combatSelections[0].scale = doubleVec;
+   combatSelections[1] = new ex.Label("Press [Z] when", activeCamera.x + 175, activeCamera.y + 205, "GameFont");
+   combatSelections[1].color = ex.Color.White;
+   combatSelections[1].scale = doubleVec;
+   combatSelections[2] = new ex.Label("finished.", activeCamera.x + 175, activeCamera.y + 235, "GameFont");
+   combatSelections[2].color = ex.Color.White;
+   combatSelections[2].scale = doubleVec;
+   combatSelections[3] = new ex.Label("", activeCamera.x + 175, activeCamera.y + 265, "GameFont");
+   combatSelections[3].color = ex.Color.White;
+   combatSelections[3].scale = doubleVec;
+
+
+   partyUILabels.forEach(lbl => {
+      game.currentScene.add(lbl);
+   });
+   combatFeedbackLabels.forEach(fbl =>{
+      game.currentScene.add(fbl);      
+   });
+   combatSelections.forEach(csl =>{
+      game.currentScene.add(csl);
+   });
+   //game.currentScene.add(combatFeedbackLabels[0]);
+
    console.log("Combat GUI loaded.");
    //InitializeCombat();
    //wait one second for fade in to finish

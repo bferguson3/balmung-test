@@ -64,7 +64,7 @@
         {
          "columns":40,
          "firstgid":1,
-         "image":"assets\/X11tiles-32-32.png",
+         "image":"../X11tiles-32-32.png",
          "imageheight":864,
          "imagewidth":1280,
          "margin":0,
@@ -164,7 +164,7 @@
         {
          "columns":32,
          "firstgid":1081,
-         "image":"assets\/angband32.png",
+         "image":"../angband32.png",
          "imageheight":1920,
          "imagewidth":1024,
          "margin":0,
@@ -178,7 +178,7 @@
         {
          "columns":32,
          "firstgid":3001,
-         "image":"assets\/sum.png",
+         "image":"../sum.png",
          "imageheight":1248,
          "imagewidth":1024,
          "margin":0,
@@ -192,7 +192,7 @@
         {
          "columns":32,
          "firstgid":4249,
-         "image":"assets\/terrain_atlas.png",
+         "image":"../terrain_atlas.png",
          "imageheight":1024,
          "imagewidth":1024,
          "margin":0,
