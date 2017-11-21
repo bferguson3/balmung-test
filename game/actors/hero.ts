@@ -1,6 +1,7 @@
 import * as ex from 'excalibur';
 import { g } from '../globals';
 import * as manager from '../game';
+import * as ui from '../ui';
 
 export class Hero extends ex.Actor{
 			public moveLeft : number = 2;
@@ -133,7 +134,7 @@ export class Hero extends ex.Actor{
                      manager.diaMap.y = this.y + 80;
                      manager.diaMap.x = this.x - manager.game.getDrawWidth()/2 + 80;
                      var offsettxt = 50;
-                     manager.dialogueLabels.forEach(element => {
+                     ui.dialogueLabels.forEach(element => {
                         element.x = manager.diaMap.x + 30;
                         element.y = manager.diaMap.y + offsettxt;
                         offsettxt += 30;

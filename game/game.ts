@@ -2,6 +2,7 @@ import * as ex from 'excalibur';
 import { g } from "./globals";
 import TiledResource from '../src';
 import { Hero, TriggerCell } from './actors';
+import * as ui from './ui';
 
 export var game = new ex.Engine({
    width: 800,
@@ -31,7 +32,7 @@ export var tm;// : TileMap2;
 export var diaMap;// : TileMap2;
 var combatWindows;// : TileMap2;
 
-export var dialogueLabels;
+//export var dialogueLabels : ex.Label[];
 var partyUILabels = [];
 var combatFeedbackLabels = [];
 var combatSelections = [];
@@ -47,7 +48,7 @@ export function FixOffset(){
    combatWindows._onScreenXStart = 0;
 }
 
-LoadDialogueLabels();
+ui.LoadDialogueLabels();
 
 var townTestScene = new ex.Scene();
 
@@ -57,7 +58,6 @@ game.add(textTick);
 function callThis(){
    console.log("ticked");
 }
-/* */
 
 game.start(loader).then(function() {
    
@@ -92,7 +92,7 @@ game.start(loader).then(function() {
    hero[0].z = 1;
    townTestScene.add(diaMap);
 
-   dialogueLabels.forEach(ele =>{
+   ui.dialogueLabels.forEach(ele =>{
       game.add(ele);
    });
    
@@ -113,29 +113,11 @@ export function SetActiveTrigger(tgtCell: ex.Cell){
    activeTrigger = tgtCell;
 }
 
-function LoadDialogueLabels(){
-   var dialogueLabel1 = new ex.Label("", 110, game.getDrawHeight() - 130, "GameFont");
-   dialogueLabel1.color = new ex.Color(133, 91, 0);
-   dialogueLabel1.bold = true;
-   dialogueLabel1.scale = new ex.Vector(2.2, 2.2);
-   var dialogueLabel2 = new ex.Label("", 110, game.getDrawHeight() - 100, "GameFont");
-   dialogueLabel2.color = new ex.Color(133, 91, 0);
-   dialogueLabel2.bold = true;
-   dialogueLabel2.scale = new ex.Vector(2.2, 2.2);
-   var dialogueLabel3 = new ex.Label("", 110, game.getDrawHeight() - 70, "GameFont");
-   dialogueLabel3.color = new ex.Color(133, 91, 0);
-   dialogueLabel3.bold = true;
-   dialogueLabel3.scale = new ex.Vector(2.2, 2.2);
-   var dialogueLabel4 = new ex.Label("", 110, game.getDrawHeight() - 40, "GameFont");
-   dialogueLabel4.color = new ex.Color(133, 91, 0);
-   dialogueLabel4.bold = true;
-   dialogueLabel4.scale = new ex.Vector(2.2, 2.2);
-   
-   dialogueLabels = [dialogueLabel1, dialogueLabel2, dialogueLabel3, dialogueLabel4];
-}
+
+/* GUI CODE */
 
 
-
+/* SETS TILES TO BLOCKED OR UNBLOCKED. MAP SETUP? GAME? */
 function ConfigureCollision(){
    tm.data.forEach(tile => {
       //toggle collision for anything that's 830-840 ID (wall sprites)
@@ -179,6 +161,7 @@ function ConfigureCollision(){
    });
 }
 
+/*SCRIPTED TRIGGER SETUP: triggerSetup.ts ?*/
 function TriggerSetup(){
    var tc1 = new TriggerCell(tm.getCell(8, 4));
    //tc1.isTrigger = true;
@@ -208,6 +191,7 @@ function TriggerSetup(){
    
 }
 
+/*probably good for game.ts*/
 export function UpdateCam(){
    var target = hero[0];
    
@@ -222,6 +206,7 @@ export function UpdateCam(){
    }
 }
 
+/* COMBAT UI STUFF */
 function CombatFadeOut(){
    console.log("Fading out...");
    //fade out ainimation
@@ -239,6 +224,7 @@ function CombatFadeOut(){
 
 }
 
+/*COMBAT BG STUFF */
 function InitializeCombat(){
    console.log("Initilizing combat...");
    //Determine action order
@@ -249,6 +235,7 @@ function InitializeCombat(){
    HighlightMoveRange(hero[0]);
 }
 
+/*COMBAT SUPPLEMENTAL UI CODE*/
 function HighlightMoveRange(npc: Hero){
    var moveableZone = new ex.Sprite(resources.greenSqImg, 0, 0, 32, 32);
    moveableZone.opacity(0.3);
@@ -266,7 +253,7 @@ function HighlightMoveRange(npc: Hero){
    });
 }
 
-
+/*combat ui*/
 function LoadCombatGUI(){
    combatWindows.x = hero[0].x - (8 * 32) - 16;//hero.x;//activeCamera.x + (8*16);//64 + (8 * 16);
    combatWindows.y = hero[0].y - (4 * 32) - 92;//hero.y;//activeCamera.y + (4*16);//360 + (4 * 16);
@@ -325,6 +312,7 @@ function LoadCombatGUI(){
    //wait one second for fade in to finish
    }
 
+   /*combat*/
 export function LoadCombat(){
    //fade out, 
    CombatFadeOut();
