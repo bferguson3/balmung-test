@@ -1,6 +1,6 @@
 import * as ex from 'excalibur';
 import { g } from "./globals";
-import TiledResource from '../src';
+import { TiledResource } from '../src';
 import { Hero, TriggerCell } from './actors';
 import * as ui from './ui';
 
