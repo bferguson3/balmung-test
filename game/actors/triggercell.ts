@@ -2,6 +2,7 @@ import * as ex from 'excalibur';
 import { TiledResource } from '../../src';
 import { g } from '../globals';
 import * as manager from '../game';
+import * as ui from '../ui';
 
 export class TriggerCell extends ex.Cell {
 
@@ -21,10 +22,10 @@ export class TriggerCell extends ex.Cell {
 
    TurnDialoguePage(){
 
-      manager.dialogueLabels[0].text = this.dialogueText[this.pageOffset] ? this.dialogueText[this.pageOffset] : "";
-      manager.dialogueLabels[1].text = this.dialogueText[this.pageOffset+1] ? this.dialogueText[this.pageOffset+1] : "";
-      manager.dialogueLabels[2].text = this.dialogueText[this.pageOffset+2] ? this.dialogueText[this.pageOffset+2] : "";
-      manager.dialogueLabels[3].text = this.dialogueText[this.pageOffset+3] ? this.dialogueText[this.pageOffset+3] : "";
+      ui.dialogueLabels[0].text = this.dialogueText[this.pageOffset] ? this.dialogueText[this.pageOffset] : "";
+      ui.dialogueLabels[1].text = this.dialogueText[this.pageOffset+1] ? this.dialogueText[this.pageOffset+1] : "";
+      ui.dialogueLabels[2].text = this.dialogueText[this.pageOffset+2] ? this.dialogueText[this.pageOffset+2] : "";
+      ui.dialogueLabels[3].text = this.dialogueText[this.pageOffset+3] ? this.dialogueText[this.pageOffset+3] : "";
       this.pageOffset += 4;
    }
 

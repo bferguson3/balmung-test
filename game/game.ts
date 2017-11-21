@@ -30,7 +30,7 @@ for(var asset in resources){
 
 export var tm;// : TileMap2;
 export var diaMap;// : TileMap2;
-//var combatWindows;// : TileMap2;
+export var combatWindows;// : TileMap2;
 
 //export var dialogueLabels : ex.Label[];
 
@@ -45,7 +45,7 @@ export function UpdateCombatUI(){
 }
 
 export function FixOffset(){
-   ui.combatWindows._onScreenXStart = 0;
+   combatWindows._onScreenXStart = 0;
 }
 
 ui.LoadDialogueLabels();
@@ -67,6 +67,7 @@ game.start(loader).then(function() {
       console.log(ts.image, ts.imageTexture.isLoaded());
    });
    
+   combatWindows = resources.combatWinMap.getTileMap();
    tm = resources.map.getTileMap(); 
    diaMap = resources.dialogueWin.getTileMap();
    diaMap.y = game.getDrawHeight() - 180;
@@ -90,8 +91,7 @@ game.start(loader).then(function() {
    townTestScene.add(hero[0]);
    hero[0].z = 1;
    townTestScene.add(diaMap);
-   //ui.combatWindows = resources.combatWinMap.getTileMap();
-   
+   //ui.
    ui.dialogueLabels.forEach(ele =>{
       game.add(ele);
    });
@@ -103,7 +103,7 @@ game.start(loader).then(function() {
    g.inputMode = g.inputModes.moving;
    
    //if(combatWindows)
-   ui.combatWindows.on("postupdate", function (evt: ex.Events.PostUpdateEvent){
+   combatWindows.on("postupdate", function (evt: ex.Events.PostUpdateEvent){
          FixOffset();
    });
 });
@@ -112,7 +112,6 @@ game.start(loader).then(function() {
 export function SetActiveTrigger(tgtCell: ex.Cell){
    activeTrigger = tgtCell;
 }
-
 
 /* GUI CODE */
 
