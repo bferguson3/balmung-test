@@ -1,5 +1,5 @@
 import * as ex from 'excalibur';
-import TiledResource from '../../src';
+import { TiledResource } from '../../src';
 import { g } from '../globals';
 import * as manager from '../game';
 
